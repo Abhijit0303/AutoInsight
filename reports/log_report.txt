@@ -1,0 +1,23 @@
+Log Analysis Report - Generated on 2026-01-02 21:20:57
+
+Overall Statistics:
+==========
+Total Log Entries: 115
+
+ERROR logs : 25
+
+WARNING logs : 14
+
+
+ERRORS BY SERVICE
+--------------------
+PaymentService      : 8
+AuthService         : 6
+DBService           : 4
+OrderService        : 3
+NotificationService : 2
+SearchService       : 2
+
+ANOMALIES DETECTED
+--------------------
+Hour: 2025-01-01 22:00Error Count: 18Baseline Avg: 8.33

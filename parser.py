@@ -1,30 +1,33 @@
-import re
 from datetime import datetime
+import re
 
 LOG_PATTERN = re.compile(
-        r"""
-        (?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})  # Timestamp in YYYY-MM-DD HH:MM:SS format
-        \s+
-        (?P<log_level>INFO|DEBUG|WARNING|ERROR|CRITICAL)    # Log level
-        \s+
-        (?P<service>[A-Za-z0-9_]+)                           # Service name
-        \s+
-        (?P<message>.+)                                     # Log message
-        """,
-        re.VERBOSE
-    )
-
+    r'^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) '
+    r'(INFO|ERROR|WARNING) '
+    r'(\S+) '
+    r'(.+)$'
+)
 
 def parse_log_line(line):
-    if not line or not isinstance(line, str):
-        raise ValueError("Input line must be a non-empty string")
-    try:
-        match = LOG_PATTERN.match(line)
-        if not match:
-            raise ValueError("Log line does not match expected format")
 
-        log_data = match.groupdict()
-        log_data['timestamp'] = datetime.strptime(log_data['timestamp'], '%Y-%m-%d %H:%M:%S')
-        return log_data
-    except Exception as e:
-        raise ValueError(f"Failed to parse log line: {e}")
+    #I am returning None because I don't want the pipeline should break in the meantime
+    if not line:
+        return None
+
+    match = LOG_PATTERN.match(line)
+    if not match:
+        return None
+
+    timestamp_str, level, service, message = match.groups()
+
+    try:
+        timestamp = datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S")
+    except ValueError:
+        return None
+
+    return {
+        "timestamp": timestamp,
+        "level": level,
+        "service": service,
+        "message": message.strip()
+    }
