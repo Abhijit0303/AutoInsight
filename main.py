@@ -3,8 +3,10 @@ from analyzer import analyzer_logs
 from detector import detect_error_spikes
 from reporter import generate_text_report, generate_json_report
 from visualizer import plot_errors_by_hour, plot_errors_by_service, plot_log_levels
+from ai_analyzer import analyze_logs_with_gemini
 
 LOG_FILE_PATH = 'logs/server.log'
+LOG_REPORT_PATH = 'reports/log_report.txt'
 
 def main():
     parsed_logs = []
@@ -39,7 +41,17 @@ def main():
     generate_text_report(stats, anamolies)
     generate_json_report(stats, anamolies)
 
-    print("Log analysis complete. Reports and visualizations generated." \
+    #AI- Analyzer integration
+    try:
+        print("Starting log analysis...")
+        analysis = analyze_logs_with_gemini(LOG_REPORT_PATH)
+        print("\nAI Analysis of Log Report:\n")
+        print("-" * 30)
+        print(analysis)
+    except Exception as e:
+        print(f"Error during AI analysis: {e}")
+
+    print("\nLog analysis complete. Reports and visualizations generated." \
     "" \
     " Check the 'reports' directory.")
 
